@@ -93,6 +93,7 @@ const questions = () => {
         "GPLv3",
         "ISC",
         "MIT",
+        "None",
       ],
     },
     {
@@ -121,14 +122,13 @@ const questions = () => {
 };
 
 // Function to write README using fs
-function writeToFile(fileName, data) {
-  fileName = "README.md";
-  fs.writeFile(fileName, data, (err) => {
+const writeToFile = (data) => {
+  fs.writeFile("README.md", data, (err) => {
     err
       ? console.log(err)
       : console.log("Your README has been successfully created!");
   });
-}
+};
 
 // Function to initialize the app
 function init() {
