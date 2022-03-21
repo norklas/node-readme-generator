@@ -2,7 +2,10 @@
 const fs = require("fs");
 const inquirer = require("inquirer");
 
-// Questions for user input
+// Linking README template
+const generateMarkdown = require("./utils/generateMarkdown.js");
+
+// Questions for user input with validation
 const questions = () => {
   return inquirer.prompt([
     {
@@ -37,16 +40,6 @@ const questions = () => {
     },
     {
       type: "input",
-      name: "repoURL",
-      message: "Please enter a GitHub URL for your project:",
-      validate: (repoInput) => {
-        return repoInput
-          ? true
-          : console.log("Please enter a GitHub URL for your project!");
-      },
-    },
-    {
-      type: "input",
       name: "description",
       message: "Please write a short description for your project:",
       validate: (descriptionInput) => {
@@ -56,21 +49,14 @@ const questions = () => {
       },
     },
     {
-      type: "list",
-      name: "license",
-      message: "Which license would you like your project to have?",
-      choices: [
-        "Apache",
-        "BSD 2-clause",
-        "BSD 3-clause",
-        "BSD 3-clause Clear",
-        "Creative Commons",
-        "GPL",
-        "GPLv2",
-        "GPLv3",
-        "ISC",
-        "MIT",
-      ],
+      type: "input",
+      name: "repoURL",
+      message: "Please enter a GitHub URL for your project:",
+      validate: (repoInput) => {
+        return repoInput
+          ? true
+          : console.log("Please enter a GitHub URL for your project!");
+      },
     },
     {
       type: "input",
@@ -91,6 +77,23 @@ const questions = () => {
           ? true
           : console.log("Please enter a usage description!");
       },
+    },
+    {
+      type: "list",
+      name: "license",
+      message: "Which license would you like your project to have?",
+      choices: [
+        "Apache",
+        "BSD 2-clause",
+        "BSD 3-clause",
+        "BSD 3-clause Clear",
+        "Creative Commons",
+        "GPL",
+        "GPLv2",
+        "GPLv3",
+        "ISC",
+        "MIT",
+      ],
     },
     {
       type: "input",
@@ -117,12 +120,32 @@ const questions = () => {
   ]);
 };
 
-// TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
+// Function to write README using fs
+function writeToFile(fileName, data) {
+  fileName = "README.md";
+  fs.writeFile(fileName, data, (err) => {
+    err
+      ? console.log(err)
+      : console.log("Your README has been successfully created!");
+  });
+}
 
-// TODO: Create a function to initialize app
+// Function to initialize the app
 function init() {
-  questions();
+  // Calling questions function
+  questions()
+    // Getting user answers
+    .then((answers) => {
+      return generateMarkdown(answers);
+    })
+    // Using data to write file
+    .then((data) => {
+      return writeToFile(data);
+    })
+    // Error catching
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 // Function call to initialize app
